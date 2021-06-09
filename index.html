@@ -1,0 +1,84 @@
+<html>
+<title>Firebase Messaging Demo</title>
+<style>
+    div {
+        margin-bottom: 15px;
+    }
+</style>
+<body>
+    <div id="token"></div>
+    <div id="msg"></div>
+    <div id="notis"></div>
+    <div id="err"></div>
+    <script src="https://www.gstatic.com/firebasejs/8.6.5/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.5/firebase-messaging.js"></script>
+    <script>
+        MsgElem = document.getElementById("msg");
+        TokenElem = document.getElementById("token");
+        NotisElem = document.getElementById("notis");
+        ErrElem = document.getElementById("err");
+        // Initialize Firebase
+        // TODO: Replace with your project's customized code snippet
+        var config = {
+            apiKey: "AIzaSyCDe3G4MF8lVB8WME8EIT3Sz5XuQlf-WFU",
+  authDomain: "topka-project.firebaseapp.com",
+  projectId: "topka-project",
+  storageBucket: "topka-project.appspot.com",
+  messagingSenderId: "385088330860",
+  appId: "1:385088330860:web:e1cd4966950a3321ed4c49"
+        };
+        firebase.initializeApp(config);
+
+        const messaging = firebase.messaging();
+        messaging
+            .requestPermission()
+            .then(function () {
+                MsgElem.innerHTML = "Notification permission granted." 
+                console.log("Notification permission granted.");
+
+                // get the token in the form of promise
+                return messaging.getToken()
+            })
+            .then(function(token) {
+                TokenElem.innerHTML = "token is : " + token
+            })
+            .catch(function (err) {
+                ErrElem.innerHTML =  ErrElem.innerHTML + "; " + err
+                console.log("Unable to get permission to notify.", err);
+            });
+
+  
+     
+
+    //         messaging.onMessage(function(payload) {
+    // // console.log('Message received. ', payload);
+    //             alert("СТОЛ");
+    //         });
+    // // регистрируем пустой ServiceWorker каждый раз
+    
+
+    // // запрашиваем права на показ уведомлений если еще не получили их
+
+    messaging.onMessage(function(payload) {
+        navigator.serviceWorker.register('messaging-sw.js');
+            navigator.serviceWorker.ready.then(function(registration) {
+                // теперь мы можем показать уведомление
+                registration.showNotification(payload.notification.title, payload.notification);
+                console.log("ИЗНУТРИ");
+            }).catch(function(error) {
+                console.log('ServiceWorker registration failed', error);
+            });
+       
+        });
+
+
+
+
+
+
+
+    </script>
+
+    </body>
+
+</html>
